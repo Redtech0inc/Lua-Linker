@@ -11,7 +11,7 @@ into the Lua file at any position (must be it's own line)<br>
 <br>
 ```[relative path]``` here means the way to get to the file form this file
 
-Note that the import will not be put where the comment is but above the file importing it
+Note: the import will not be put where the comment is but above the file importing it
 
 ### define
 this allows you to define a variable that will be replaced with the intended value at "build time" (in the file that defines it) to do this simply add<br>
@@ -50,7 +50,7 @@ in this example, if the platform in ```env.json``` is set to ```"computer"``` th
 <br>
 Note: ```--#elseif``` and ```--#else``` are optional
 <br><br>
-Note: that currently ```--#define```, ect... inside of the if blocks will be accepted no matter if the condition is true or false (i'am working on that)
+Note: currently ```--#define```, ect... inside of the if blocks will be accepted no matter if the condition is true or false (i'am working on that)
 
 
 ## environment
