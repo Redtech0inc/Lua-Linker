@@ -23,6 +23,7 @@ at any point in the file (must be it's own line)<br>
 ```[pattern]``` is the name of the "build time" variable e.g: MY_BUILD_VAR<br>
 ```[replacementStr]``` is the value you want to replace it with e.g: "this was replaced by the bundler"<br>
 <br>
+
 ```lua
 --#define MY_BUILD_VAR "this was replaced by the bundler"
 ```
@@ -42,7 +43,7 @@ your code here
 ```[condition]``` describes a statement of up to 3 words (anything not ```false``` or ```nil``` is seen as ```true```) the condition can even include values from  ```--#define```(as long as they have been defined before the condition)<br>
 example:
 ```lua
---#if PLATFORM == "computer"
+--#if DEVICE_PLATFORM == "computer"
 print("on computer")
 --#endif
 ```
@@ -59,7 +60,7 @@ and it's value is ```[value]```
 ### existing values
 <li> LINKER_VERSION: the version of the linker
 <li> COS_VERSION: CraftOS version
-<li> PLATFORM: the device i.e "turtle", "pocket" or "computer"
+<li> DEVICE_PLATFORM: the device i.e "turtle", "pocket" or "computer"
 <li> BUILD_TIME: a string generated using os.date("%c") during building <br> (<b>cannot be modified by environment</b>)
 <li> BUILD_EPOCH: a number generated during os.epoch("utc") during building <br> (<b>cannot be modified by environment</b>)
 
