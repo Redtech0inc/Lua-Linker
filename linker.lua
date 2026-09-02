@@ -53,11 +53,11 @@ local function makeAssemblyEnv(filePath)
     local env = {}
 
     if turtle then
-        env.PLATFORM = "turtle"
+        env.DEVICE_PLATFORM = "turtle"
     elseif pocket then
-        env.PLATFORM = "pocket"
+        env.DEVICE_PLATFORM = "pocket"
     else
-        env.PLATFORM = "computer"
+        env.DEVICE_PLATFORM = "computer"
     end
 
     local versionNumber = tonumber((os.version() or ""):match("(%d+%.%d+)"))
