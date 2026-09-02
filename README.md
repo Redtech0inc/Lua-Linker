@@ -39,7 +39,7 @@ your code here
 your code here
 --#endif
 ```
-```[condition]``` describes a up to 3 word true/false statement (anything not false or nil is seen as true) the can even include values from  ```--#define```(as long as they have been defined before this)<br>
+```[condition]``` describes a up to 3 word true/false statement (anything not ```false``` or ```nil``` is seen as ```true```) the condition can even include values from  ```--#define```(as long as they have been defined before this)<br>
 example:
 ```lua
 --#if PLATFORM == "computer"
