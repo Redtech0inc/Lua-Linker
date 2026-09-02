@@ -1,5 +1,5 @@
 # Lua Linker
-this is a file that allows you to turn a project (aka many small files which have 'require' that chain to assemble the project) into one file. This concept is taken form languages like C where you have a linker as part of the compiler
+this is a file that allows you to turn a project (aka many small files which have 'require' that chain to assemble the project) into one file. This concept is taken from languages like C where you have a linker as part of the compiler
 
 ## instructions
 ### include (require)
@@ -29,7 +29,7 @@ at any point in the file (must be it's own line)<br>
 this example will replace any standalone mention of ```MY_BUILD_VAR``` (even if in a string) with '```"this was replaced by the bundler"```' during the assembling of your Lua project
 
 ### if / elseif / else / endif
-this allows you to only add specific lines if a condition at build time is true to use putdown<br>
+this allows you to only add specific lines if a condition at build time is true to use do<br>
 ```lua
 --#if [condition]
 your code here
@@ -39,20 +39,20 @@ your code here
 your code here
 --#endif
 ```
-```[condition]``` describes a up to 3 word true/false statement (anything not ```false``` or ```nil``` is seen as ```true```) the condition can even include values from  ```--#define```(as long as they have been defined before the condition)<br>
+```[condition]``` describes a statement of up to 3 words (anything not ```false``` or ```nil``` is seen as ```true```) the condition can even include values from  ```--#define```(as long as they have been defined before the condition)<br>
 example:
 ```lua
 --#if PLATFORM == "computer"
 print("on computer")
 --#endif
 ```
-in this example, if the platform in ```env.json``` is set to ```"computer"``` the final output file will have this print call in it other wise it will be removed during compacting<br>
+in this example, if the platform in ```env.json``` is set to ```"computer"``` the final output file will have this print call in it otherwise it will be removed during compacting<br>
 <br>
 Note: ```--#elseif``` and ```--#else``` are optional
 
 
 ## environment
-the linker (bundler) will automatically make a environment(```env.json```) on first launch (directly after starting so terminating will cause no issue)
+the linker (bundler) will automatically make a environment (```env.json```) on first launch (directly after starting so terminating will cause no issue)
 this environment describes build variables it is like ```--#define [environmentVar] [value]``` but for all files so the key of the variable is the ```[environmentVar]```
 and it's value is ```[value]```
 
@@ -66,17 +66,18 @@ and it's value is ```[value]```
 <br>
 <br>
 
-Note: anything that isn't a number or boolean will be turned into a lua string so ```nil``` will be turned into ```"nil"```
+Note: Any environment value that isn't a number or boolean is inserted as a Lua string literal<br>
+e.g: ```nil``` will be turned into ```"nil"```
 
 ## output
 the output is the base file given to the linker with all it's dependencies and their dependencies stitched on top.<br>
-the linker dynamically resolves where what should be and compacts the file down (removes comments not needed spaces and tabs)
+the linker dynamically resolves where everything should be and compacts the file down (removes comments not needed spaces and tabs)
 
 ## warning
 this does physically graft the files together so local variables with the same name may override each other in the final product
 
 ## Config
-you can configure a few things abt the linker in the top of the file such as:
+you can configure a few things about the linker in the top of the file such as:
 <li> LH_AUTO_SAVE_INTERVALS: how many lines it should write before saving in between while compacting files
 <li> TABS: how many spaces are seen as a tab key press (since code editors do their own thing)
 
