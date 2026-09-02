@@ -481,7 +481,7 @@ if canProceed then
         local replacement = parseEnvValue(v)
         table.insert(lineLambdas.general,
         function(line)
-            line:gsub("%f[%w_]"..keyword.."%f[^%w_]", pattern)
+            line:gsub("%f[%w_]"..keyword.."%f[^%w_]", replacement)
             return line
         end)
     end
