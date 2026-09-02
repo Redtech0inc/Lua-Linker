@@ -477,11 +477,11 @@ if canProceed then
 
     local env = getEnvTable(envFilePath)
     for k,v in pairs(env) do
-        local keyword = k:gsub("([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1")
+        local keyword = k
         local replacement = parseEnvValue(v)
         table.insert(lineLambdas.general,
         function(line)
-            line:gsub("%f[%w_]"..keyword.."%f[^%w_]", replacement)
+            line = line:gsub("%f[%w_]"..keyword.."%f[^%w_]", replacement)
             return line
         end)
     end
