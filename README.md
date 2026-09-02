@@ -16,7 +16,7 @@ Note: the import will not be put where the comment is but above the file importi
 ### define
 this allows you to define a variable that will be replaced with the intended value at "build time" (in the file that defines it) to do this simply add<br>
 ```lua
-    --#define [pattern] [replacementStr]
+--#define [pattern] [replacementStr]
 ```
 at any point in the file (must be it's own line)<br>
 <br>
