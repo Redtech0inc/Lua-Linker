@@ -264,7 +264,7 @@ local function elseIf(path,tokens,lineCount)
     table.insert(layer,{eval(statement),lineCount})
 end
 
-local function elsE(path,tokens,lineCount) --weird name but gets rid of lua key word name being used
+local function elsE(_,_,lineCount) --weird name but gets rid of lua key word name being used
     if not validateIf("else",lineCount) then return end
 
     local layer = ifIndices[ifLayer]
@@ -272,7 +272,7 @@ local function elsE(path,tokens,lineCount) --weird name but gets rid of lua key 
     table.insert(layer,{true,lineCount}) --since this block is always true if none other's are
 end
 
-local function endif(path,tokens,lineCount)
+local function endif(path,_,lineCount)
     if not validateIf("endif",lineCount) then return end
 
     local lambdas = {}
