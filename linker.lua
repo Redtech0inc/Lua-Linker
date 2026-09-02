@@ -463,7 +463,6 @@ local function compactFile(path,layer)
 
     if not cacheFileTree[layer] then cacheFileTree[layer] = {} end
     table.insert(cacheFileTree[layer],fileName..".lh") --make a "lua header" file
-
 end
 
 local startTime, startDateStr, endTime
@@ -478,22 +477,22 @@ if canProceed then
 
     local env = getEnvTable(envFilePath)
     for k,v in pairs(env) do
-        local keyword = k
+        local keyword = k:gsub("([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1")
         local replacement = parseEnvValue(v)
         table.insert(lineLambdas.general,
         function(line)
-            line = line:gsub(keyword, replacement)
+            line:gsub("%f[%w_]"..keyword.."%f[^%w_]", pattern)
             return line
         end)
     end
     table.insert(lineLambdas.general,
     function(line)
-        line = line:gsub("BUILD_TIME", startDateStr)
+        line = line:gsub("%f[%w_]BUILD_TIME%f[^%w_]", startDateStr)
         return line
     end)
     table.insert(lineLambdas.general,
     function(line)
-        line = line:gsub("BUILD_EPOCH", tostring(startTime))
+        line = line:gsub("%f[%w_]BUILD_EPOCH%f[%w_]", tostring(startTime))
         return line
     end)
 
