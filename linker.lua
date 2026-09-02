@@ -332,13 +332,29 @@ instructions.endif = endif
 
 createTree = function(filePath)
 
-    local lineCount = 0
+    local lineCount, execute = 0, true
+    local layer
     for line in io.lines(filePath) do
         lineCount = lineCount + 1
         local data = parseInstruction(line)
         if data then
-            if type(instructions[data[1]]) == "function" then
+            if data[1] == "if" or data[1] == "elseif" or data[1] == "else" or data[1] == "endif" then
                 instructions[data[1]](filePath, data, lineCount)
+
+                execute = true
+                for i=1,#ifIndices do
+                    layer = ifIndices[i]
+                    if layer and type(layer[#layer]) == "table" then
+                        if not layer[#layer][1] then
+                            execute = false
+                            break
+                        end
+                    end
+                end
+            elseif type(instructions[data[1]]) == "function" then
+                if execute then
+                    instructions[data[1]](filePath, data, lineCount)
+                end
             end
         end
     end
@@ -622,5 +638,4 @@ if canProceed then
         print("generated '"..outputName..".log' in '"..logsFolderPath.."'")
     end
     term.setTextColor(colors.white)
-    --[[]]
 end
