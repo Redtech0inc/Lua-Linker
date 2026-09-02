@@ -492,7 +492,7 @@ if canProceed then
     end)
     table.insert(lineLambdas.general,
     function(line)
-        line = line:gsub("%f[%w_]BUILD_EPOCH%f[%w_]", tostring(startTime))
+        line = line:gsub("%f[%w_]BUILD_EPOCH%f[^%w_]", tostring(startTime))
         return line
     end)
 
