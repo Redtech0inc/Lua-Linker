@@ -51,7 +51,7 @@ in this example, if the platform in ```env.json``` is set to ```"computer"``` th
 <br>
 Note: ```--#elseif``` and ```--#else``` are optional<br>
 <br>
-NOTE: STATEMENTS ARE EVALUATED SO THIS IS A SECURITY RISK
+<b>NOTE: STATEMENTS ARE EVALUATED SO THIS IS A SECURITY RISK</b>
 
 ## environment
 the linker (bundler) will automatically make a environment (```env.json```) on first launch (directly after starting so terminating will cause no issue)
