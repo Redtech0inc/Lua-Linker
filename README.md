@@ -49,8 +49,6 @@ print("on computer")
 in this example, if the platform in ```env.json``` is set to ```"computer"``` the final output file will have this print call in it other wise it will be removed during compacting<br>
 <br>
 Note: ```--#elseif``` and ```--#else``` are optional
-<br><br>
-Note: currently ```--#define```, ect... inside of the if blocks will be accepted no matter if the condition is true or false (i'am working on that)
 
 
 ## environment
