@@ -247,7 +247,7 @@ end
 local function startIf(path,tokens,lineCount) --can't call the method 'if' cause lua keyword
     ifLayer = ifLayer + 1
     if not ifIndices[ifLayer] then ifIndices[ifLayer] = {} end
-    local statement = table.concat(tokens," ",2,math.min(4,#tokens)) --concat the next 3 tokens e.g VAR1 == VAR2
+    local statement = table.concat(tokens," ",2) --concat the tokens e.g VAR1 == VAR2
     statement = applyLineLambdas(path,statement,-1) --use unrealistic line count since this is not in a file
 
     ifIndices[ifLayer][1] = {eval(statement),lineCount}
@@ -256,7 +256,7 @@ end
 local function elseIf(path,tokens,lineCount)
     if not validateIf("elseif",lineCount) then return end
 
-    local statement = table.concat(tokens," ",2,math.min(4,#tokens)) --concat the next 3 tokens e.g VAR1 == VAR2
+    local statement = table.concat(tokens," ",2) --concat the tokens e.g VAR1 == VAR2
     statement = applyLineLambdas(path,statement,-1) --use unrealistic line count since this is not in a file
 
     local layer = ifIndices[ifLayer]
@@ -631,7 +631,7 @@ if canProceed then
 
     term.setTextColor(colors.white)
     print("finished in: "..takenTime.." ms")
-    
+
     if completionLog then
         completionLog:close()
         term.setTextColor(colors.gray)
