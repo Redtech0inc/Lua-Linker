@@ -345,11 +345,11 @@ createTree = function(filePath)
                 for i=1,#ifIndices do
                     layer = ifIndices[i]
                     if layer and type(layer[#layer]) == "table" then
-                        if layer.foundTrue == nil then layer.foundTrue = false end
-
                         if (not layer[#layer][1]) or layer.foundTrue then
                             execute = false
                             break
+                        else
+                            layer.foundTrue = true
                         end
                     end
                 end
