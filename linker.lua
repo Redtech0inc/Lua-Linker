@@ -32,7 +32,7 @@ local function jsonStyleToString(value)
     if type(value) == "nil" then return "null"
     elseif type(value) == "number" or type(value) == "boolean" then return tostring(value)
     end
-    return "\""..tostring(value).."\""
+    return "\""..(tostring(value):gsub("\"","")).."\""
 end
 
 local function getSimpleJSONStyleMap(map)
@@ -40,9 +40,9 @@ local function getSimpleJSONStyleMap(map)
     local firstItr = true
     for k,v in pairs(map) do
         if firstItr then
-            output = output.."    \""..tostring(k).."\":"..jsonStyleToString(v)
+            output = output.."    \""..tostring(k).."\": "..jsonStyleToString(v)
         else
-            output = output..",\n    \""..tostring(k).."\":"..jsonStyleToString(v)
+            output = output..",\n    \""..tostring(k).."\": "..jsonStyleToString(v)
         end
         firstItr = false
     end
@@ -345,7 +345,9 @@ createTree = function(filePath)
                 for i=1,#ifIndices do
                     layer = ifIndices[i]
                     if layer and type(layer[#layer]) == "table" then
-                        if not layer[#layer][1] then
+                        if layer.foundTrue == nil then layer.foundTrue = false end
+
+                        if (not layer[#layer][1]) or layer.foundTrue then
                             execute = false
                             break
                         end
@@ -444,7 +446,7 @@ local function compactFile(path,layer)
         end
         for i=1,#lineLambdas.general do
             if type(lineLambdas.general[i]) == "function" then
-                line = tostring(lineLambdas.general[i](line) or "") --! if you need lineCount you have to add it but now i don't see the use
+                line = tostring(lineLambdas.general[i](line) or "") --! if you need lineCount you have to add it but right now i don't see the use
             end
         end
 
@@ -476,6 +478,8 @@ if canProceed then
     fs.makeDir(cacheFolderPath)
 
     local env = getEnvTable(envFilePath)
+    env.BUILD_TIME = startDateStr
+    env.BUILD_EPOCH = tostring(startTime)
     for k,v in pairs(env) do
         local keyword = k
         local replacement = parseEnvValue(v)
@@ -485,16 +489,6 @@ if canProceed then
             return line
         end)
     end
-    table.insert(lineLambdas.general,
-    function(line)
-        line = line:gsub("%f[%w_]BUILD_TIME%f[^%w_]", startDateStr)
-        return line
-    end)
-    table.insert(lineLambdas.general,
-    function(line)
-        line = line:gsub("%f[%w_]BUILD_EPOCH%f[^%w_]", tostring(startTime))
-        return line
-    end)
 
     createTree(filePath)
 
@@ -565,7 +559,6 @@ if canProceed then
 
     printToLog()
     printToLog("<=====ENVIRONMENT=====>")
-    printToLog("loaded from: "..envFilePath)
     printToLog(getSimpleJSONStyleMap(env))
 
     --dependency lookup tree (just logged)
@@ -584,7 +577,7 @@ if canProceed then
     local tableStr
     for i=0,#fileTree do --starts at 1 cause base file isn't inserted here
         tableStr = textutils.serialize(fileTree[i],{compact=true})
-        printToLog("    layer "..i..":"..tableStr)
+        printToLog("    layer "..i..": "..tableStr)
     end
     printToLog("}")
 
@@ -595,7 +588,7 @@ if canProceed then
     local tableStr
     for i=0,#cacheFileTree do
         tableStr = textutils.serialize(cacheFileTree[i],{compact=true})
-        printToLog("    layer "..i..":"..tableStr)
+        printToLog("    layer "..i..": "..tableStr)
     end
     printToLog("}")
 

@@ -1,2 +1,5 @@
 # markdowns
 *.md
+
+#exclude the vscode files for this workspace
+.vscode
