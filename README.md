@@ -2,7 +2,7 @@
 this is a file that allows you to turn a project (aka many small files which have 'require' that chain to assemble the project) into one file. This concept is taken from languages like C where you have a linker as part of the compiler
 
 ## instructions
-to work they have to be in a seperate line who's fisrt 3 letters have to be the beginning of an instruction(```--#```)
+to work they have to be in a seperate line who's fisrt 3 letters have to be the beginning of an instruction(```--#```) this also means <b>NO tabs, spaces or other characters</b>
 
 ### include (require)
 to do a "require" you simply type <br>
