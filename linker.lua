@@ -479,7 +479,7 @@ if canProceed then
 
     local env = getEnvTable(envFilePath)
     env.BUILD_TIME = startDateStr
-    env.BUILD_EPOCH = tostring(startTime)
+    env.BUILD_EPOCH = startTime
     for k,v in pairs(env) do
         local keyword = k
         local replacement = parseEnvValue(v)
