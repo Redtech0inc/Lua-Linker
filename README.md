@@ -32,7 +32,7 @@ at any point in the file (must be it's own line)<br>
 this example will replace any standalone mention of ```MY_BUILD_VAR``` (even if in a string) with '```"this was replaced by the bundler"```' during the assembling of your Lua project
 
 ### if / elseif / else / endif
-this allows you to only add specific lines if a condition at build time is true to use do<br>
+this allows you to only add specific lines if a condition at "build time" is true<br>
 ```lua
 --#if [condition]
 your code here
