@@ -65,7 +65,7 @@ and it's value is ```[value]```
 <li> COS_VERSION: CraftOS version
 <li> DEVICE_PLATFORM: the device i.e "turtle", "pocket" or "computer"
 <li> BUILD_TIME: a string generated using os.date("%c") during building <br> (<b>cannot be modified by environment</b>)
-<li> BUILD_EPOCH: a number generated during os.epoch("utc") during building <br> (<b>cannot be modified by environment</b>)
+<li> BUILD_EPOCH: a number generated using os.epoch("utc") during building <br> (<b>cannot be modified by environment</b>)
 
 <br>
 <br>
