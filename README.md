@@ -69,7 +69,7 @@ and it's value is ```[value]```
 <br>
 
 Note: Any environment value that isn't a number or boolean is inserted as a Lua string literal<br>
-e.g: ```nil``` will be turned into ```"nil"```
+e.g: ```nil```(json:```null```) will be turned into ```"nil"```
 
 ## output
 the output is the base file given to the linker with all it's dependencies and their dependencies stitched on top.<br>
