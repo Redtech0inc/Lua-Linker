@@ -80,8 +80,8 @@ the linker dynamically resolves where everything should be and compacts the file
 ## warning
 this does physically graft the files together so local variables with the same name may override each other in the final product
 
-## Config
-you can configure a few things about the linker in the top of the file such as:
+## Config Values
+you can configure a few things about the linker in the top of its file such as:
 <li> LH_SAVE_INTERVALS: how many lines it should write in a cache file buffer before flushing it (auto flushes at end of every file)
 <li> OUTPUT_SAVE_INTERVALS: how many lines it should write in the output buffer before flushing it (auto flushes at end of every included file)
 <li> TABS: Number of spaces treated as one indentation level (since this number changes from editor to editor)

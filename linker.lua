@@ -63,7 +63,7 @@ local function makeAssemblyEnv(filePath)
 
     local versionNumber = tonumber((os.version() or ""):match("(%d+%.%d+)"))
     env.COS_VERSION = versionNumber or -1
-    env.LINKER_VERSION = 1.2
+    env.LINKER_VERSION = 1.3
 
     local file = io.open(filePath,"w")
     file:write(getSimpleJSONStyleMap(env))
