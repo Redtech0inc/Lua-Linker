@@ -2,7 +2,7 @@
 this is a file that allows you to turn a project (aka many small files which have 'require' that chain to assemble the project) into one file. This concept is taken from languages like C where you have a linker as part of the compiler
 
 ## instructions
-to work they have to be in a seperate line who's fisrt 3 letters have to be the beginning of an instruction(```--#```) this also means <b>NO tabs, spaces or other characters</b>
+to work they have to be in a seperate line who's first 3 letters have to be the beginning of an instruction(```--#```) this also means <b>NO tabs, spaces or other characters</b>
 
 ### include (require)
 to do a "require" you simply type <br>
@@ -82,8 +82,9 @@ this does physically graft the files together so local variables with the same n
 
 ## Config
 you can configure a few things about the linker in the top of the file such as:
-<li> LH_AUTO_SAVE_INTERVALS: how many lines it should write before saving in between while compacting files
-<li> TABS: how many spaces are seen as a tab key press (since code editors do their own thing)
+<li> LH_SAVE_INTERVALS: how many lines it should write in a cache file buffer before flushing it (auto flushes at end of every file)
+<li> OUTPUT_SAVE_INTERVALS: how many lines it should write in the output buffer before flushing it (auto flushes at end of every included file)
+<li> TABS: Number of spaces treated as one indentation level (since this number changes from editor to editor)
 
 ## FUTURE FEATURES
 <li> UI: makes navigation easier

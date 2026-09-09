@@ -1,4 +1,5 @@
-local LH_AUTO_SAVE_INTERVALS = 20
+local LH_SAVE_INTERVALS = 20
+local OUTPUT_SAVE_INTERVALS = 20
 local TABS = "    "
 
 local function arrowRead(arrow,arrowColor,char)
@@ -455,7 +456,7 @@ local function compactFile(path,layer)
             totalLines = totalLines + 1
             print(totalLines..": "..line)
             file:write(line,"\n")
-            if linesSinceLastSave >= LH_AUTO_SAVE_INTERVALS then
+            if linesSinceLastSave >= LH_SAVE_INTERVALS then
                 file:flush()
                 linesSinceLastSave = 0
             end
@@ -471,7 +472,7 @@ local startTime, startDateStr, endTime
 --main code
 if canProceed then
     startTime = os.epoch("utc")
-    startDateStr = "\""..os.date("%c").."\""
+    startDateStr = os.date("%c")
 
     --empty the cache
     fs.delete(cacheFolderPath)
@@ -502,34 +503,62 @@ if canProceed then
         end
     end
 
-    local outputFile = io.open(fs.combine(cacheFolderPath,cacheFileTree[0][1]),"r") --open the original file as a base
-    if not outputFile then error("was unable to open file reading handle for '"..outputPath.."'") end
-    local outputContent = outputFile:read("a")
-    outputFile:close()
-    outputFile = io.open(outputPath,"w")
+    local outputFile = io.open(outputPath,"w")
     if not outputFile then error("was unable to open file writing handle for '"..outputPath.."'") end
 
-    local sizeBetween = 0
-    local path, file
-    for i=1,#cacheFileTree do
+    local sizeBetween, outputLines, outputChars, linesSinceLastSave = 0, 0, 0, 0
+    local path, filesToResolve, headerStartStr, headerEndStr
+    local firstFile = true
 
-        local filesToResolve = cacheFileTree[i]
+    for i=#cacheFileTree,0,-1 do --iterate backwards through topological tree to be abler to flush in between
+        filesToResolve = cacheFileTree[i]
         for j=1,#filesToResolve do
-            path = fs.combine(cacheFolderPath,filesToResolve[j])
+            headerStartStr = "--== "..filesToResolve[j].."-begin ==--"
+            headerEndStr = "\n--== "..filesToResolve[j].."-end ==--"
+
+            path = fs.combine(cacheFolderPath, filesToResolve[j])
             sizeBetween = sizeBetween + fs.getSize(path)
 
-            file = io.open(path,"r")
-
-            if file then --tries to stick it together but if the handle doesn't work just skips it (and hopes it works)
-                outputContent = "--== "..filesToResolve[j].."-begin ==--\n"..file:read("a").."--== "..filesToResolve[j].."-end ==--\n"..outputContent
-                file:close()
-            else
-                warn("couldn't link file '"..path.."' cause of file handle issues")
+            if i ~= 0 and not firstFile then --ensures that begin and end comments are separate lines
+                outputFile:write("\n")
+                outputChars = outputChars + 1
             end
+
+            if i==#cacheFileTree then
+                outputFile:write(headerStartStr)
+                outputChars = outputChars + #headerStartStr
+            elseif i ~= 0 then
+                outputFile:write(headerStartStr)
+                outputChars = outputChars + #headerStartStr
+            end
+            if i ~= 0 then outputLines = outputLines + 1 end
+
+            for line in io.lines(path) do
+
+                outputFile:write("\n")
+                outputFile:write(line)
+
+                outputChars = outputChars + #line+1
+                outputLines = outputLines + 1
+
+                linesSinceLastSave = linesSinceLastSave + 1
+                if linesSinceLastSave >= OUTPUT_SAVE_INTERVALS then
+                    outputFile:flush()
+                    linesSinceLastSave = 0
+                end
+            end
+
+            if i ~= 0 then
+                outputFile:write(headerEndStr)
+                outputChars = outputChars + #headerEndStr
+                outputLines = outputLines + 1
+            end
+
+            outputFile:flush() --save after every file
+
+            if firstFile then firstFile = false end
         end
     end
-    outputFile:write(outputContent)
-
     outputFile:close()
 
     local completionLog = io.open(fs.combine(logsFolderPath,outputName..".log"),"w")
@@ -553,9 +582,9 @@ if canProceed then
     print("SUCCESS!")
 
     if completionLog then completionLog:write("<==FILE CONTENT INFO==>") end
-    printToLog("Characters: "..#outputContent)
-    printToLog("lines: "..totalLines)
-    outputContent = nil --gc can now get rid of it (frees up a lot of ram)
+    printToLog("Characters: "..outputChars)
+    printToLog("lines: "..outputLines)
+    --outputContent = nil --gc can now get rid of it (frees up a lot of ram)
 
     printToLog()
     printToLog("<=====ENVIRONMENT=====>")
