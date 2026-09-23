@@ -55,6 +55,33 @@ Note: ```--#elseif``` and ```--#else``` are optional<br>
 <br>
 <b>NOTE: STATEMENTS ARE EVALUATED SO THIS IS A POTENTIAL SECURITY RISK</b>
 
+### undef
+this allows you to revoke a define statement for a given pattern as shown here
+```lua
+--#undef [pattern]
+```
+```[pattern]``` describes the same ```[pattern]``` that was used for the coresponding define instruction
+esample:
+```lua
+--#define FILE_DEFINITION "just some definition"
+print(FILE_DEFINITION)
+--#undef FILE_DEFINITION
+print(FILE_DEFINITION)
+```
+in this example the first print will become
+```lua
+print("just some definition")
+```
+but the second will stay
+```lua
+print(FILE_DEFINITION)
+```
+due to the fact that the linker no longer listens to the original definition
+this is the same as ```nil``` unless FILE_DEFINITION is a variable that was defined beforehand (which it isn't here)<br><br>
+
+Note: that environment definitions cannot be undef-ed<br>
+Note: if you try to undef a non existing definition, it will do nothing
+
 ## Environment
 the linker (bundler) will automatically make a environment (```env.json```) on first launch (directly after starting so terminating will cause no issue)
 this environment describes build variables it is like ```--#define [environmentVar] [value]``` but for all files so the key of the variable is the ```[environmentVar]```
