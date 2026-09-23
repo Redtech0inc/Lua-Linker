@@ -60,7 +60,7 @@ this allows you to revoke a define statement for a given pattern as shown here
 ```lua
 --#undef [pattern]
 ```
-```[pattern]``` describes the same ```[pattern]``` that was used for the coresponding define instruction
+```[pattern]``` describes the same ```[pattern]``` that was used for the corresponding define instruction
 esample:
 ```lua
 --#define FILE_DEFINITION "just some definition"
@@ -76,7 +76,7 @@ but the second will stay
 ```lua
 print(FILE_DEFINITION)
 ```
-due to the fact that the linker no longer listens to the original definition
+due to the fact that the linker no longer listens to the original definition. Now
 this is the same as ```nil``` unless FILE_DEFINITION is a variable that was defined beforehand (which it isn't here)<br><br>
 
 Note: that environment definitions cannot be undef-ed<br>
