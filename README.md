@@ -61,7 +61,7 @@ this allows you to revoke a define statement for a given pattern as shown here
 --#undef [pattern]
 ```
 ```[pattern]``` describes the same ```[pattern]``` that was used for the corresponding define instruction
-esample:
+example:
 ```lua
 --#define FILE_DEFINITION "just some definition"
 print(FILE_DEFINITION)
