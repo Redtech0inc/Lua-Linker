@@ -1,7 +1,7 @@
 # Lua Linker
 this is a file that allows you to turn a project (aka many small files which have 'require' that chain to assemble the project) into one file. This concept is taken from languages like C where you have a linker as part of the compiler
 
-## instructions
+## Instructions
 to work they have to be in a seperate line who's first 3 letters have to be the beginning of an instruction(```--#```) this also means <b>NO tabs, spaces or other characters</b>
 
 ### include (require)
@@ -55,12 +55,12 @@ Note: ```--#elseif``` and ```--#else``` are optional<br>
 <br>
 <b>NOTE: STATEMENTS ARE EVALUATED SO THIS IS A POTENTIAL SECURITY RISK</b>
 
-## environment
+## Environment
 the linker (bundler) will automatically make a environment (```env.json```) on first launch (directly after starting so terminating will cause no issue)
 this environment describes build variables it is like ```--#define [environmentVar] [value]``` but for all files so the key of the variable is the ```[environmentVar]```
 and it's value is ```[value]```
 
-### existing values
+### Existing Values
 <li> LINKER_VERSION: the version of the linker
 <li> COS_VERSION: CraftOS version
 <li> DEVICE_PLATFORM: the device i.e "turtle", "pocket" or "computer"
@@ -73,11 +73,11 @@ and it's value is ```[value]```
 Note: Any environment value that isn't a number or boolean is inserted as a Lua string literal<br>
 e.g: ```nil```(json:```null```) will be turned into ```"nil"```
 
-## output
+## Output
 the output is the base file given to the linker with all it's dependencies and their dependencies stitched on top.<br>
 the linker dynamically resolves where everything should be and compacts the file down (removes comments not needed spaces and tabs)
 
-## warning
+## Warning
 this does physically graft the files together so local variables with the same name may override each other in the final product
 
 ## Config Values
