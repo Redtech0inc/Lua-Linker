@@ -183,16 +183,35 @@ local function lookupToTopologicalTree()
     return output
 end
 
-local function insertInLineLambdas(path,func)
+local function insertInLineLambdas(path,func,undefKey)
     if type(lineLambdas[path]) ~= "table" then lineLambdas[path] = {} end
-    table.insert(lineLambdas[path],func)
+    table.insert(lineLambdas[path],{func,undefKey})
+end
+
+local function addLambdaBlock(path,key,lineCount)
+    local lambdas = lineLambdas[path] or {}
+    for i=1,#lambdas do
+        if type(lambdas[i]) == "table" and lambdas[i][2] == key then
+            if type(lambdas[i][3]) ~= "number" then --if there is already a number defined then it had to have been further up in the file
+                lambdas[i][3] = lineCount
+            end
+        end
+    end
 end
 
 local function applyLineLambdas(path,line,lineCount)
     local lambdas = lineLambdas[path] or {}
     for i=1,#lambdas do
-        if type(lambdas[i]) == "function" then
-            line = tostring(lambdas[i](line,lineCount) or "")
+        if type(lambdas[i]) == "table" then
+            if type(lambdas[i][1]) == "function" then
+                if lambdas[i][2] ~= nil and type(lambdas[i][3]) == "number" then
+                    if lambdas[i][3] > lineCount then
+                        line = tostring(lambdas[i][1](line,lineCount) or "")
+                    end
+                else
+                    line = tostring(lambdas[i][1](line,lineCount) or "")
+                end
+            end
         end
     end
     for i=1,#lineLambdas.general do
@@ -224,7 +243,7 @@ local function define(path,tokens)
     function (line)
         line = line:gsub("%f[%w_]"..keyword.."%f[^%w_]", pattern)
         return line
-    end)
+    end, keyword)
 end
 
 local function eval(expression)
@@ -249,7 +268,7 @@ local function startIf(path,tokens,lineCount) --can't call the method 'if' cause
     ifLayer = ifLayer + 1
     if not ifIndices[ifLayer] then ifIndices[ifLayer] = {} end
     local statement = table.concat(tokens," ",2) --concat the tokens e.g VAR1 == VAR2
-    statement = applyLineLambdas(path,statement,-1) --use unrealistic line count since this is not in a file
+    statement = applyLineLambdas(path,statement,lineCount) --use unrealistic line count since this is not in a file | edit: now you have to use it so that undef works
 
     ifIndices[ifLayer][1] = {eval(statement),lineCount}
 end
@@ -258,7 +277,7 @@ local function elseIf(path,tokens,lineCount)
     if not validateIf("elseif",lineCount) then return end
 
     local statement = table.concat(tokens," ",2) --concat the tokens e.g VAR1 == VAR2
-    statement = applyLineLambdas(path,statement,-1) --use unrealistic line count since this is not in a file
+    statement = applyLineLambdas(path,statement,lineCount) --use unrealistic line count since this is not in a file | edit: now you have to use it so that undef works
 
     local layer = ifIndices[ifLayer]
     layer[#layer][3] = lineCount-1
@@ -323,6 +342,11 @@ local function endif(path,_,lineCount)
     ifLayer = ifLayer - 1
 end
 
+local function undef(path,tokens,lineCount)
+    local keyword = tokens[2]:gsub("([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1")
+    addLambdaBlock(path, keyword, lineCount);
+end
+
 --* DEFINE AVAILABLE INSTRUCTIONS HERE
 instructions.include = include
 instructions.define = define
@@ -330,6 +354,7 @@ instructions["if"] = startIf --have to do this cause if is a keyword
 instructions["elseif"] = elseIf
 instructions["else"] = elsE
 instructions.endif = endif
+instructions.undef = undef
 
 createTree = function(filePath)
 
@@ -441,8 +466,16 @@ local function compactFile(path,layer)
         --line = line:gsub("%s*%-%-.*$", "")
 
         for i=1,#lambdas do
-            if type(lambdas[i]) == "function" then
-                line = tostring(lambdas[i](line, lineCount) or "")
+            if type(lambdas[i]) == "table" then
+                if type(lambdas[i][1]) == "function" then
+                    if lambdas[i][2] ~= nil and type(lambdas[i][3]) == "number" then
+                        if lambdas[i][3] > lineCount then
+                            line = tostring(lambdas[i][1](line,lineCount) or "")
+                        end
+                    else
+                        line = tostring(lambdas[i][1](line,lineCount) or "")
+                    end
+                end
             end
         end
         for i=1,#lineLambdas.general do
