@@ -96,6 +96,11 @@ local function parseEnvValue(value)
     end
 end
 
+local function getPathString(path)
+    if #path == 0 or path == "/" then return "root" end
+    return path
+end
+
 --TODO: fixe the absence of a UI cause typing f***ing sucks
 local mountPath = fs.getDir(shell.getRunningProgram())
 if mountPath == "rom/" then mountPath = "" end
@@ -116,7 +121,9 @@ term.setTextColor(colors.orange)
 print("please enter the path from root of the file you would like to \"assemble\"")
 term.setTextColor(colors.white)
 local filePath = arrowRead("> ",colors.lightGray)
-if not fs.exists(filePath) then error("could not locate '"..filePath.."'") end
+if not fs.exists(filePath) then error("could not locate '"..getPathString(filePath).."'")
+elseif fs.isDir(filePath) then error("cannot bundle a directory ('"..getPathString(filePath).."')")
+end
 print()
 
 term.setTextColor(colors.blue)
@@ -643,7 +650,7 @@ if canProceed then
     end
     printToLog("}")
 
-    --dependency tree (logged and printed)
+    --dependency tree (just logged)
     printToLog()
     printToLog("<=====HEADER TREE=====>")
     printToLog("{")
