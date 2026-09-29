@@ -254,7 +254,7 @@ local function define(path,tokens)
 end
 
 local function execute(expression)
-    local result, err = load(expression)
+    local result, err = load(expression,nil,"t",_G)
     if result then return result() end
 end
 
