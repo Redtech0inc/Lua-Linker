@@ -51,9 +51,18 @@ print("on computer")
 ```
 in this example, if the platform in ```env.json``` is set to ```"computer"``` the final output file will have this print call in it otherwise it will be removed during compacting<br>
 <br>
+Tip: putting ```eval``` or ```evaluate``` in front of the statement treats it as a lua program that is to be executed thus allowing you to manually place the return and write a multi-statement Lua chunk. It still follows the return rules above e.g:
+
+```lua
+--#if eval local function wrapper() return BUILD_TIME end return wrapper()
+print("some code")
+--#endif
+```
+the ```eval``` makes the linker take the statement at face value instead of appending a ```return``` at the beginning
+<br>
 Note: ```--#elseif``` and ```--#else``` are optional<br>
 <br>
-<b>NOTE: STATEMENTS ARE EVALUATED SO THIS IS A POTENTIAL SECURITY RISK</b>
+<b>NOTE: STATEMENTS ARE EVALUATED SO THIS IS A POTENTIAL SECURITY RISK (CHECK THE FILE AND IT'S DEPENDENCIES BEFORE LINKING!)</b>
 
 ### undef
 this allows you to revoke a define statement for a given pattern as shown here

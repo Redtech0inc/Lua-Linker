@@ -63,7 +63,7 @@ local function makeAssemblyEnv(filePath)
 
     local versionNumber = tonumber((os.version() or ""):match("(%d+%.%d+)"))
     env.COS_VERSION = versionNumber or -1
-    env.LINKER_VERSION = 1.3
+    env.LINKER_VERSION = 1.4
 
     local file = io.open(filePath,"w")
     file:write(getSimpleJSONStyleMap(env))
@@ -253,9 +253,21 @@ local function define(path,tokens)
     end, keyword)
 end
 
-local function eval(expression)
-    local result, err = load("return " .. expression)
+local function execute(expression)
+    local result, err = load(expression)
     if result then return result() end
+end
+
+local function eval(path,tokens,lineCount)
+    local statement = "return nil"
+    if tokens[2] == "eval" or tokens[2] == "evaluate" then
+        statement = table.concat(tokens," ",3) --concat the tokens e.g VAR1 == VAR2
+        statement = applyLineLambdas(path,statement,lineCount) --use unrealistic line count since this is not in a file | edit: now you have to use it so that undef works
+    else
+        statement = table.concat(tokens," ",2) --concat the tokens e.g VAR1 == VAR2
+        statement = "return " .. applyLineLambdas(path,statement,lineCount) --use unrealistic line count since this is not in a file | edit: now you have to use it so that undef works
+    end
+    return execute(statement)
 end
 
 local ifIndices, ifLayer = {}, 0
@@ -274,21 +286,16 @@ end
 local function startIf(path,tokens,lineCount) --can't call the method 'if' cause lua keyword
     ifLayer = ifLayer + 1
     if not ifIndices[ifLayer] then ifIndices[ifLayer] = {} end
-    local statement = table.concat(tokens," ",2) --concat the tokens e.g VAR1 == VAR2
-    statement = applyLineLambdas(path,statement,lineCount) --use unrealistic line count since this is not in a file | edit: now you have to use it so that undef works
 
-    ifIndices[ifLayer][1] = {eval(statement),lineCount}
+    ifIndices[ifLayer][1] = {eval(path,tokens,lineCount),lineCount}
 end
 
 local function elseIf(path,tokens,lineCount)
     if not validateIf("elseif",lineCount) then return end
 
-    local statement = table.concat(tokens," ",2) --concat the tokens e.g VAR1 == VAR2
-    statement = applyLineLambdas(path,statement,lineCount) --use unrealistic line count since this is not in a file | edit: now you have to use it so that undef works
-
     local layer = ifIndices[ifLayer]
     layer[#layer][3] = lineCount-1
-    table.insert(layer,{eval(statement),lineCount})
+    table.insert(layer,{eval(path,tokens,lineCount),lineCount})
 end
 
 local function elsE(_,_,lineCount) --weird name but gets rid of lua key word name being used
