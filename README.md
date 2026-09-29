@@ -58,7 +58,7 @@ Tip: putting ```eval``` or ```evaluate``` in front of the statement treats it as
 print("some code")
 --#endif
 ```
-the ```eval``` makes the linker take the statement at face value instead of appending a ```return``` at the beginning
+the ```eval``` makes the linker take the statement at face value instead of appending a ```return``` at the beginning<br>
 <br>
 Note: ```--#elseif``` and ```--#else``` are optional<br>
 <br>
