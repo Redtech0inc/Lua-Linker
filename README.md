@@ -45,7 +45,7 @@ your code here
 ```[condition]``` describes a true/false statement (anything not ```false``` or ```nil``` is seen as ```true```) the condition can even include values from  ```--#define```(as long as they have been defined before the condition)<br>
 example:
 ```lua
---#if DEVICE_PLATFORM == "computer"
+--#if _DEVICE_PLATFORM == "computer"
 print("on computer")
 --#endif
 ```
@@ -54,7 +54,7 @@ in this example, if the platform in ```env.json``` is set to ```"computer"``` th
 Tip: putting ```eval``` or ```evaluate``` in front of the statement treats it as a lua program that is to be executed thus allowing you to manually place the return and write a multi-statement Lua chunk. It still follows the return rules above e.g:
 
 ```lua
---#if eval local function wrapper() return BUILD_TIME end return wrapper()
+--#if eval local function wrapper() return _BUILD_TIME end return wrapper()
 print("some code")
 --#endif
 ```
@@ -62,7 +62,7 @@ the ```eval``` makes the linker take the statement at face value instead of appe
 <br>
 Note: ```--#elseif``` and ```--#else``` are optional<br>
 <br>
-<b>NOTE: STATEMENTS ARE EVALUATED SO THIS IS A POTENTIAL SECURITY RISK (CHECK THE FILE AND IT'S DEPENDENCIES BEFORE LINKING!)</b>
+<b>NOTE: STATEMENTS ARE EVALUATED AS A LUA FUNCTION SO THIS IS A POTENTIAL SECURITY RISK (CHECK THE FILE AND IT'S DEPENDENCIES BEFORE LINKING!)</b>
 
 ### undef
 this allows you to revoke a define statement for a given pattern as shown here
@@ -97,16 +97,15 @@ this environment describes build variables it is like ```--#define [environmentV
 and it's value is ```[value]```
 
 ### Existing Values
-<li> LINKER_VERSION: the version of the linker
-<li> COS_VERSION: CraftOS version
-<li> DEVICE_PLATFORM: the device i.e "turtle", "pocket" or "computer"
-<li> BUILD_TIME: a string generated using os.date("%c") during building <br> (<b>cannot be modified by environment</b>)
-<li> BUILD_EPOCH: a number generated using os.epoch("utc") during building <br> (<b>cannot be modified by environment</b>)
+<li> _LINKER_VERSION: the version of the linker
+<li> _COS_VERSION: CraftOS version
+<li> _DEVICE_PLATFORM: the device i.e "turtle", "pocket" or "computer"
+<li> _BUILD_TIME: a string generated using os.date("%c") during building <br> (<b>cannot be modified by environment</b>)
+<li> _BUILD_EPOCH: a number generated using os.epoch("utc") during building <br> (<b>cannot be modified by environment</b>)
 
 <br>
-<br>
 
-Note: Any environment value that isn't a number or boolean is inserted as a Lua string literal<br>
+Note: Any environment value that isn't a number, boolean or table is inserted as a Lua string literal<br>
 e.g: ```nil```(json:```null```) will be turned into ```"nil"```
 
 ## Output

@@ -32,6 +32,7 @@ end
 local function jsonStyleToString(value)
     if type(value) == "nil" then return "null"
     elseif type(value) == "number" or type(value) == "boolean" then return tostring(value)
+    elseif type(value) == "table" then return textutils.serialiseJSON(value)
     end
     return "\""..(tostring(value):gsub("\"","")).."\""
 end
@@ -54,16 +55,16 @@ local function makeAssemblyEnv(filePath)
     local env = {}
 
     if turtle then
-        env.DEVICE_PLATFORM = "turtle"
+        env._DEVICE_PLATFORM = "turtle"
     elseif pocket then
-        env.DEVICE_PLATFORM = "pocket"
+        env._DEVICE_PLATFORM = "pocket"
     else
-        env.DEVICE_PLATFORM = "computer"
+        env._DEVICE_PLATFORM = "computer"
     end
 
     local versionNumber = tonumber((os.version() or ""):match("(%d+%.%d+)"))
-    env.COS_VERSION = versionNumber or -1
-    env.LINKER_VERSION = 1.4
+    env._COS_VERSION = versionNumber or -1
+    env._LINKER_VERSION = 1.5
 
     local file = io.open(filePath,"w")
     file:write(getSimpleJSONStyleMap(env))
@@ -82,18 +83,17 @@ local function getEnvTable(filePath)
         table = makeAssemblyEnv(filePath) --generate the default one to replace the brocken one
     end
 
-    table.BUILD_TIME = nil --ensures that we can not have a second BUILD_TIME
-    table.BUILD_EPOCH = nil --ensures that we can not have a second BUILD_EPOCH
+    table._BUILD_TIME = nil --ensures that we can not have a second _BUILD_TIME
+    table._BUILD_EPOCH = nil --ensures that we can not have a second _BUILD_EPOCH
 
     return table
 end
 
 local function parseEnvValue(value)
-    if type(value) == "number" or type(value) == "boolean" then
-        return tostring(value)
-    else
-        return "\""..tostring(value).."\""
+    if type(value) == "number" or type(value) == "boolean" then return tostring(value)
+    elseif type(value) == "table" then return textutils.serialise(value,{compact=true})
     end
+    return "\""..tostring(value).."\""
 end
 
 local function getPathString(path)
@@ -525,9 +525,10 @@ if canProceed then
     fs.delete(cacheFolderPath)
     fs.makeDir(cacheFolderPath)
 
+    --load the environment
     local env = getEnvTable(envFilePath)
-    env.BUILD_TIME = startDateStr
-    env.BUILD_EPOCH = startTime
+    env._BUILD_TIME = startDateStr
+    env._BUILD_EPOCH = startTime
     for k,v in pairs(env) do
         local keyword = k
         local replacement = parseEnvValue(v)
