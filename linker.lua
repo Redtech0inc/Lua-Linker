@@ -229,6 +229,23 @@ local function applyLineLambdas(path,line,lineCount)
     return line
 end
 
+local function execute(expression)
+    local result, err = load(expression,nil,"t",_G)
+    if result then return result() end
+end
+
+local function eval(path,tokens,lineCount)
+    local statement = "return nil"
+    if tokens[2]:lower() == "eval" or tokens[2]:lower() == "evaluate" then
+        statement = table.concat(tokens," ",3) --concat the tokens e.g VAR1 == VAR2
+        statement = applyLineLambdas(path,statement,lineCount) --use unrealistic line count since this is not in a file | edit: now you have to use it so that undef works
+    else
+        statement = table.concat(tokens," ",2) --concat the tokens e.g VAR1 == VAR2
+        statement = "return " .. applyLineLambdas(path,statement,lineCount) --use unrealistic line count since this is not in a file | edit: now you have to use it so that undef works
+    end
+    return execute(statement)
+end
+
 local function include(path,tokens)
     layer = layer + 1
     local fileMountPath = fs.getDir(path)
@@ -251,23 +268,6 @@ local function define(path,tokens)
         line = line:gsub("%f[%w_]"..keyword.."%f[^%w_]", pattern)
         return line
     end, keyword)
-end
-
-local function execute(expression)
-    local result, err = load(expression,nil,"t",_G)
-    if result then return result() end
-end
-
-local function eval(path,tokens,lineCount)
-    local statement = "return nil"
-    if tokens[2] == "eval" or tokens[2] == "evaluate" then
-        statement = table.concat(tokens," ",3) --concat the tokens e.g VAR1 == VAR2
-        statement = applyLineLambdas(path,statement,lineCount) --use unrealistic line count since this is not in a file | edit: now you have to use it so that undef works
-    else
-        statement = table.concat(tokens," ",2) --concat the tokens e.g VAR1 == VAR2
-        statement = "return " .. applyLineLambdas(path,statement,lineCount) --use unrealistic line count since this is not in a file | edit: now you have to use it so that undef works
-    end
-    return execute(statement)
 end
 
 local ifIndices, ifLayer = {}, 0
